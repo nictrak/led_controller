@@ -56,9 +56,9 @@ module Controller(
     parameter WAIT_LAT = 1;
     
     wire[7:0] op_code;
-    wire[15:0] index;
+    wire[7:0] index;
     assign op_code = instruction[31:24];
-    assign index = instruction[23:8];
+    assign index = instruction[23:16];
     
     wire time_out;
     reg[3:0] tick_lat = 3;

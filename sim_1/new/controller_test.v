@@ -44,8 +44,8 @@ module controller_test(
         clk <= 0;
         instruction <= 0;
         #24
-        instruction <= 32'h04_00_00_00;
-        #5
+        instruction <= 32'h04_01_00_00;
+        #41
         instruction <= 0;
         #1000 $finish;
     end

@@ -23,9 +23,10 @@
 module controller_test(
 
     );
-    reg[7:0] instruction;
+    reg[31:0] instruction;
     reg clk;
     wire[3:0] state;
+    wire[3:0] lat;
     Controller con(
         .serial(serial),
         .sclk(sclk),
@@ -43,7 +44,7 @@ module controller_test(
         clk <= 0;
         instruction <= 0;
         #24
-        instruction <= 8'b00100_000;
+        instruction <= 32'h04_00_00_00;
         #5
         instruction <= 0;
         #1000 $finish;

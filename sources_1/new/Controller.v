@@ -23,10 +23,10 @@
 module Controller(
     output reg serial,
     output reg sclk,
-    output reg lat,
+    output reg[3:0] lat,
     output reg gsclk,
     output reg[3:0] state,
-    input wire[7:0] instruction,
+    input wire[31:0] instruction,
     input wire clk
     );
     //op_code enum
@@ -55,7 +55,10 @@ module Controller(
     parameter READY = 0;
     parameter WAIT_LAT = 1;
     
-    reg[7:0] doing;
+    wire[7:0] op_code;
+    wire[15:0] index;
+    assign op_code = instruction[31:24];
+    assign index = instruction[23:8];
     
     wire time_out;
     reg[3:0] tick_lat = 3;
@@ -69,7 +72,6 @@ module Controller(
     
     initial begin
         state <= 0;
-        doing <= 0;
         state <= 0;
         serial <= 0;
         sclk <= 0;
@@ -81,24 +83,21 @@ module Controller(
     always @(posedge clk) begin
         case(state)
             READY: begin
-                if(instruction[7:3] > 5'b00000) begin
-                    doing = instruction;
-                    case(doing[7:3])
+                    case(op_code)
                         SEND_LATCH: begin
                             start_wait_lat <= 1;
-                            lat <= 1;
+                            lat[index] <= 1;
                             state <= WAIT_LAT;    
                         end
                         default: ;
                     endcase
-                end
             end
             WAIT_LAT: begin
                 start_wait_lat <= 0;
                 if(time_out === 1) begin
                     state <= READY;
-                    lat <= 0;
-                end
+                    lat[index] <= 0;
+                end else lat[index] <= 1;
             end
             default: ;
         endcase
